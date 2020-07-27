@@ -1,3 +1,7 @@
+## [0.0.2] - 27.07.2020
+
+Updated the pub.dev scoring
+
 ## [0.0.1] - 27.07.2020
 
 Added source code.<br>
