@@ -2,12 +2,22 @@ library animated_onboarding;
 
 import 'package:flutter/material.dart';
 
+/*
+  Use this widget in your onboarding process.
+  It already comes with Scaffold widget.
+*/
 class AnimatedOnboarding extends StatefulWidget {
+  // total of all pages in your onboarding process
   final List<OnboardingPage> pages;
+  // your custom PageController
   final PageController pageController;
+  // Callback if the user clicks on Finish or the next button on the last page
   final VoidCallback onFinishedButtonTap;
+  // headers top left widget that should be displayed
   final Widget topLeftChild;
+  // headers top right widget that should be displayed; Will be replaced by "Finish"-button on the last page.
   final Widget topRightChild;
+  // main axis alignment between header widgets
   final MainAxisAlignment topMainAxisAlignment;
 
   const AnimatedOnboarding({
@@ -31,14 +41,19 @@ class _AnimatedOnboardingState extends State<AnimatedOnboarding> {
 
   @override
   void initState() {
+    // notify scroll changes in pageview
     widget.pageController?.addListener(() {
+      // +0.025 - shows a little bit of the upcoming page in the circle button
       _notifier.value = widget.pageController.page + 0.025;
 
-      if (widget.pageController.page == widget.pages.length - 1 && !_lastPageIsVisible) {
+      // change state if the current page is the last page
+      if (widget.pageController.page == widget.pages.length - 1 &&
+          !_lastPageIsVisible) {
         setState(() => _lastPageIsVisible = true);
       }
 
-      if (_lastPageIsVisible && widget.pageController.page != widget.pages.length - 1) {
+      if (_lastPageIsVisible &&
+          widget.pageController.page != widget.pages.length - 1) {
         setState(() => _lastPageIsVisible = false);
       }
     });
@@ -66,7 +81,8 @@ class _AnimatedOnboardingState extends State<AnimatedOnboarding> {
                 context: context,
                 notifier: _notifier,
                 target: _button,
-                colors: widget.pages.map((e) => e.color).toList(growable: false),
+                colors:
+                    widget.pages.map((e) => e.color).toList(growable: false),
               ),
             ),
           ),
@@ -97,7 +113,8 @@ class _AnimatedOnboardingState extends State<AnimatedOnboarding> {
                         onPressed: () => widget.onFinishedButtonTap(),
                         child: Text(
                           "Finish",
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
                         ),
                       ),
                     if (!_lastPageIsVisible) widget.topRightChild,
@@ -109,7 +126,9 @@ class _AnimatedOnboardingState extends State<AnimatedOnboarding> {
           GestureDetector(
             onTap: () {
               if (!_lastPageIsVisible) {
-                widget.pageController.nextPage(duration: Duration(milliseconds: 400), curve: Curves.easeInOut);
+                widget.pageController.nextPage(
+                    duration: Duration(milliseconds: 400),
+                    curve: Curves.easeInOut);
               } else {
                 widget.onFinishedButtonTap();
               }
@@ -117,7 +136,8 @@ class _AnimatedOnboardingState extends State<AnimatedOnboarding> {
             child: Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom + 25),
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewPadding.bottom + 25),
                 child: Material(
                   elevation: 4.0,
                   shadowColor: Colors.white,
@@ -126,11 +146,11 @@ class _AnimatedOnboardingState extends State<AnimatedOnboarding> {
                     child: AnimatedBuilder(
                       animation: _notifier,
                       builder: (_, __) {
-                        final animatorVal = _notifier.value - _notifier.value.floor();
-                        double opacity = 0, iconPos = 0;
+                        final animatorVal =
+                            _notifier.value - _notifier.value.floor();
+                        double iconPos = 0;
                         int colorIndex;
                         if (animatorVal < 0.5) {
-                          opacity = (animatorVal - 0.5) * -2;
                           iconPos = 60 * -animatorVal;
                           colorIndex = _notifier.value.floor() + 1;
                         } else {
@@ -139,7 +159,6 @@ class _AnimatedOnboardingState extends State<AnimatedOnboarding> {
                         }
                         if (animatorVal > 0.9) {
                           iconPos = -250 * (1 - animatorVal) * 10;
-                          opacity = (animatorVal - 0.9) * 10;
                         }
                         colorIndex = colorIndex % widget.pages.length;
                         return SizedBox(
@@ -186,7 +205,8 @@ class _FlowPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final screen = MediaQuery.of(context).size;
-    if (_renderBox == null && target != null) _renderBox = target.currentContext.findRenderObject();
+    if (_renderBox == null && target != null)
+      _renderBox = target.currentContext.findRenderObject();
     if (_renderBox == null || notifier == null) return;
 
     final page = notifier.value.floor();
@@ -240,14 +260,18 @@ class _AnimatedBody extends StatefulWidget {
   _AnimatedBodyState createState() => _AnimatedBodyState();
 }
 
-class _AnimatedBodyState extends State<_AnimatedBody> with SingleTickerProviderStateMixin {
+class _AnimatedBodyState extends State<_AnimatedBody>
+    with SingleTickerProviderStateMixin {
   AnimationController _controller;
   Animation<double> _animation;
 
   @override
   initState() {
     super.initState();
-    _controller = AnimationController(duration: const Duration(milliseconds: 900), vsync: this);
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 900),
+      vsync: this,
+    );
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
 
     _controller.forward();

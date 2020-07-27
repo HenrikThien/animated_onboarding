@@ -1,5 +1,5 @@
 name: animated_onboarding
-description: Animated onboarding process for your Flutter app.
+description: Animated onboarding process for your Flutter app. This library contains a pre-build animation for your app.
 version: 0.0.1
 homepage: https://github.com/HenrikThien/animated_onboarding
 repository: https://github.com/HenrikThien/animated_onboarding
